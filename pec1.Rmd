@@ -1,0 +1,74 @@
+---
+title: "pec1"
+author: "Darío Mesas Martí"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(SummarizedExperiment)
+
+
+library("GEOquery")
+library(POMA)
+library(ggtext)
+
+```
+
+``` {r 1}
+features <- read.csv("C:/Users/dario/Desktop/master/omicas/metaboData/Datasets/2024-fobitools-UseCase_1/features.csv", sep=";")
+metaboliteNames <- read.csv("C:/Users/dario/Desktop/master/omicas/metaboData/Datasets/2024-fobitools-UseCase_1/metaboliteNames.csv", sep=";")
+metadata <- read.csv("C:/Users/dario/Desktop/master/omicas/metaboData/Datasets/2024-fobitools-UseCase_1/metadata.csv", sep=";")
+head(features)
+head(metaboliteNames)
+head(metadata)
+
+
+features_matrix <- as.matrix(features)
+rownames(features_matrix) <- metaboliteNames$names
+
+colnames(features_matrix) <- metadata$ID
+head(features_matrix)
+
+
+
+rownames(metadata) <- metadata$ID  # Asegura que los nombres de fila estén correctamente asignados
+se <- SummarizedExperiment(
+    assays = list(counts = features_matrix),
+)
+se
+
+rownames(se) <- make.names(rownames(se), unique = TRUE)
+
+imputed <- se %>% 
+  PomaImpute(method = "knn", cutoff = 20, zeros_as_na = TRUE, remove_na = TRUE)
+imputed
+
+normalized <- imputed %>% 
+  PomaNorm(method = "log_pareto")
+normalized
+PomaBoxplots(imputed, x = "samples")
+
+PomaBoxplots(normalized, x = "samples")
+
+PomaDensity(imputed, x = "samples")
+
+PomaDensity(normalized, x = "samples")
+
+head(assays(se)$counts)
+head(colData(se))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+

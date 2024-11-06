@@ -1,0 +1,15 @@
+---
+title: "metadatos"
+author: "Darío Mesas Martí"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+``` {r met}
+metadata <- read.csv("C:/Users/dario/Desktop/master/omicas/metaboData/Datasets/2024-fobitools-UseCase_1/metadata.csv", sep=";")
+metadata
+```
